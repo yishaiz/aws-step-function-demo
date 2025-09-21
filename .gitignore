@@ -1,3 +1,5 @@
 .build/
 .venv/
 venv/
+cdk.out/
+step_functions_demo/_pycache_/
