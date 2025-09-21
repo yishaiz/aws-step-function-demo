@@ -1,4 +1,3 @@
-# step_functions_demo/lambda/validate_order/index.py
 import json
 import logging
 
@@ -9,7 +8,7 @@ def lambda_handler(event, context):
     """
     בדיקת תקינות הזמנה
     """
-    logger.info(f"Validating order: {event}")
+    logger.info(f"Validating order: {json.dumps(event)}")
     
     # בדיקות בסיסיות
     order_id = event.get('order_id')
@@ -26,12 +25,13 @@ def lambda_handler(event, context):
         errors.append("Missing customer_id")
     
     if amount <= 0:
-        errors.append("Invalid amount")
+        errors.append("Invalid amount - must be greater than 0")
     
     if not items:
         errors.append("No items in order")
     
     if errors:
+        logger.error(f"Validation failed for order {order_id}: {errors}")
         return {
             'statusCode': 400,
             'valid': False,
@@ -39,6 +39,7 @@ def lambda_handler(event, context):
             'order_id': order_id
         }
     
+    logger.info(f"Order {order_id} validation successful")
     return {
         'statusCode': 200,
         'valid': True,
