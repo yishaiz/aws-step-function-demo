@@ -31,6 +31,36 @@ class StepFunctionsStack(Stack):
             timeout=Duration.seconds(30),
             description="Validates incoming orders"
         )
+        
+      # Process Payment Lambda
+        self.process_payment_lambda = _lambda.Function(
+            self, "ProcessPaymentFunction",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            code=_lambda.Code.from_asset("step_functions_demo/lambda/process_payment"),
+            handler="index.lambda_handler",
+            timeout=Duration.seconds(60),
+            description="Processes payment for orders"
+        )
+
+        # Send Confirmation Lambda
+        self.send_confirmation_lambda = _lambda.Function(
+            self, "SendConfirmationFunction",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            code=_lambda.Code.from_asset("step_functions_demo/lambda/send_confirmation"),
+            handler="index.lambda_handler",
+            timeout=Duration.seconds(30),
+            description="Sends order confirmation to customer"
+        )
+
+        # Update Inventory Lambda
+        self.update_inventory_lambda = _lambda.Function(
+            self, "UpdateInventoryFunction",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            code=_lambda.Code.from_asset("step_functions_demo/lambda/update_inventory"),
+            handler="index.lambda_handler",
+            timeout=Duration.seconds(30),
+            description="Updates inventory after successful order"
+        )
 
     def create_step_function(self):
         """יצירת State Machine - הלב של Step Function"""
@@ -128,32 +158,4 @@ class StepFunctionsStack(Stack):
             comment="Order processing workflow with validation, payment, and parallel completion steps"
         )
 
-        # Process Payment Lambda
-        self.process_payment_lambda = _lambda.Function(
-            self, "ProcessPaymentFunction",
-            runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("step_functions_demo/lambda/process_payment"),
-            handler="index.lambda_handler",
-            timeout=Duration.seconds(60),
-            description="Processes payment for orders"
-        )
-
-        # Send Confirmation Lambda
-        self.send_confirmation_lambda = _lambda.Function(
-            self, "SendConfirmationFunction",
-            runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("step_functions_demo/lambda/send_confirmation"),
-            handler="index.lambda_handler",
-            timeout=Duration.seconds(30),
-            description="Sends order confirmation to customer"
-        )
-
-        # Update Inventory Lambda
-        self.update_inventory_lambda = _lambda.Function(
-            self, "UpdateInventoryFunction",
-            runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("step_functions_demo/lambda/update_inventory"),
-            handler="index.lambda_handler",
-            timeout=Duration.seconds(30),
-            description="Updates inventory after successful order"
-        )
+        
